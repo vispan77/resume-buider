@@ -1,15 +1,18 @@
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom'
+import { logout } from '../app/features/authSlice';
 
 function Navbar() {
 
-    const user = {
-        name: "John Doe"
-    }
+    const user = useSelector((state) => state.auth.user);
+    console.log(user);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const logoutUser = () => {
-        navigate("/");
+        navigate("/");;
+        dispatch(logout());
     }
 
 
@@ -17,7 +20,7 @@ function Navbar() {
         <div className='shadow bg-white'>
 
             <nav className='flex items-center justify-between max-w-7xl mx-auto px-4 py-3.5 text-slate-800 transition-all'>
-                <Link>
+                <Link to="/">
                     <img src="/logo.svg" alt="logo" className='h-11 w-auto' />
                 </Link>
 

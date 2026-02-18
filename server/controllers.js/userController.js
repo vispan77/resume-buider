@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import Resume from "../models/Resume.js";
 
 
-export const generateToken = async (userId) => {
+export const generateToken = (userId) => {
     const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
     return token;
 }
@@ -16,7 +16,7 @@ export const registerUser = async (req, res) => {
         const { name, email, password } = req.body;
 
         //validate
-        if (!name, !email, !password) {
+        if (!name || !email || !password) {
             return res.status(400).json({
                 success: false,
                 message: "Missing required field"

@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import dbConnect from "./configs/dbConnect.js";
 import userRouter from "./routes/userRouter.js";
 import resumeRouter from "./routes/resumeRouter.js";
+import aiRouter from "./routes/aiRouter.js";
 
 
 const app = express();
@@ -27,3 +28,4 @@ app.get("/", (req, res) => {
 });
 app.use("/api/users", userRouter);
 app.use("/api/resumes", resumeRouter);
+app.use("/api/ai", aiRouter);

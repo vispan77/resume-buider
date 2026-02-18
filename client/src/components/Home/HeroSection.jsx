@@ -1,7 +1,10 @@
 import React from 'react'
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 function HeroSection() {
+
+    const { user } = useSelector((state) => state.auth);
 
     const [menuOpen, setMenuOpen] = React.useState(false);
 
@@ -19,7 +22,7 @@ function HeroSection() {
             <div className="min-h-screen pb-20">
                 {/* Navbar */}
                 <nav className="z-50 flex items-center justify-between w-full py-4 px-6 md:px-16 lg:px-24 xl:px-40 text-sm">
-                    <a href="https://prebuiltui.com">
+                    <a href="/">
                         <img src="/logo.svg" alt="logo" className='h-11 w-auto' />
                     </a>
 
@@ -31,11 +34,15 @@ function HeroSection() {
                     </div>
 
                     <div className="flex gap-2">
-                        <Link to="/app?state=register" className="hidden md:block px-6 py-2 bg-green-500 hover:bg-green-700 active:scale-95 transition-all rounded-full text-white">
+                        <Link to="/app?state=register" hidden={user} className="hidden md:block px-6 py-2 bg-green-500 hover:bg-green-700 active:scale-95 transition-all rounded-full text-white">
                             Get started
                         </Link>
-                        <Link to="/app?state=login" className="hidden md:block px-6 py-2 border active:scale-95 hover:bg-slate-50 transition-all rounded-full text-slate-700 hover:text-slate-900" >
+                        <Link to="/app?state=login" hidden={user} className="hidden md:block px-6 py-2 border active:scale-95 hover:bg-slate-50 transition-all rounded-full text-slate-700 hover:text-slate-900" >
                             Login
+                        </Link>
+
+                        <Link to="/app" hidden={!user} className='hidden md:block px-8 py-2 bg-green-500 hover:bg-green-700 active:scale-95 transition-all rounded-full text-white'>
+                            Dashboard
                         </Link>
                     </div>
 
