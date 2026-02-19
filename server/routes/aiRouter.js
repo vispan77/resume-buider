@@ -4,7 +4,7 @@ const aiRouter = express.Router();
 
 //import the controller
 import protect from "../middleware/authMiddleware.js";
-import { enhanceJobDescription, enhanceProfessionalSummary, uploadResume } from "../controllers.js/aiControllers.js";
+import { enhanceJobDescription, enhanceProfessionalSummary, uploadResume } from "../controllers/aiControllers.js";
 
 
 

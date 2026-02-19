@@ -4,7 +4,7 @@ const userRouter = express.Router();
 
 
 //import the controller
-import { getUserById, getUserResumes, loginUser, registerUser } from "../controllers.js/userController.js";
+import { getUserById, getUserResumes, loginUser, registerUser } from "../controllers/userController.js";
 import protect from "../middleware/authMiddleware.js";
 
 
