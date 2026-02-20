@@ -1,7 +1,12 @@
-import React from "react";
-import { Briefcase, Plus, Trash, Sparkles } from "lucide-react";
+import React, { useState } from "react";
+import { Briefcase, Plus, Trash, Sparkles, Loader2 } from "lucide-react";
+import { useSelector } from "react-redux";
+import api from "../configs/api";
 
 function ExperienceForm({ data = [], onChange }) {
+
+  const { token } = useSelector((state) => state.auth);
+  const [generatingIndex, setGeneratingIndex] = useState(-1)
 
   const addExperience = () => {
     const newExperience = {
@@ -32,6 +37,28 @@ function ExperienceForm({ data = [], onChange }) {
     if (checked) updated[index].end_date = "";
     onChange(updated);
   };
+
+  const generateDescription = async (index) => {
+    setGeneratingIndex(index);
+    const experience = data[index];
+    // const prompt = `enhance this job description ${experience.description} for the position of ${experience.position} at ${experience.company}`;
+    const prompt = `You are an expert in resume writing. Your task is to enhance the 
+    job description of a resume. The job description should be 1-2 sentence also
+     highlighting key responsibilities and achievement. use action words and quantifiable 
+     results where possible. make it  ATS friendly and only return text no options or 
+     anything else, only return the to the point response dont say anyword 
+     ${experience.description} for the position of ${experience.position} at 
+     ${experience.company}`;
+
+    try {
+      const { data } = await api.post("/api/ai/enhance-job-desc", { userContent: prompt }, { headers: { Authorization: token } });
+      updateExperience(index, "description", data.enhancedContent)
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setGeneratingIndex(-1)
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -152,10 +179,17 @@ function ExperienceForm({ data = [], onChange }) {
                 </label>
 
                 <button
+                  onClick={() => generateDescription(index)}
+                  disabled={generatingIndex === index || !experience.position || !experience.company}
                   type="button"
                   className="flex items-center gap-1 px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded hover:bg-purple-200 transition"
                 >
-                  <Sparkles className="w-3 h-3" />
+                  {
+                    generatingIndex === index ?
+                      (<Loader2 className="w-3 h-3 animate-spin" />) :
+                      (<Sparkles className="w-3 h-3" />)
+                  }
+
                   Enhance with AI
                 </button>
               </div>

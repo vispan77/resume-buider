@@ -13,7 +13,13 @@ function ProfessionalSummaryForm({ data, onChange, setResumeData }) {
     const generateSummary = async () => {
         try {
             setIsGenerating(true);
-            const prompt = `enhance my professional summary "${data}"`;
+            // const prompt = `enhance my professional summary "${data}"`;
+            const prompt = `You are an expert in resume writing. 
+            Your task is to enhance the professional summary of a resume. 
+            The summary should be 1-2 sentence also highlighting key skills, 
+            experience, and career objective. make it compiling and ATS friendly
+             and only return text no options or anything else, only return the to the 
+             point response dont say anyword "${data}"`;
 
             const response = await api.post("/api/ai/enhance-pro-sum", { userContent: prompt }, { headers: { Authorization: token } });
 
@@ -25,6 +31,7 @@ function ProfessionalSummaryForm({ data, onChange, setResumeData }) {
             setIsGenerating(false)
         }
     }
+
     return (
         <div className='space-y-4'>
             <div className='flex items-center justify-between'>
