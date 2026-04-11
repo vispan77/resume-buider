@@ -93,30 +93,104 @@ function ResumeBuilder() {
         window.print();
     }
 
+    // const saveResume = async () => {
+    //     try {
+    //         let updatedResumeData = structuredClone(resumeData);
+
+    //         //remove image from the updatedResumeData
+    //         if (typeof resumeData.personal_info.image === "object") {
+    //             delete updatedResumeData.personal_info.image
+    //         }
+
+    //         const formData = new FormData();
+    //         formData.append("resumeId", resumeId)
+    //         formData.append("resumeData", JSON.stringify(updatedResumeData));
+    //         removeBackground && formData.append("removeBackground", "yes");
+    //         typeof resumeData.personal_info.image === "object" && formData.append("image", resumeData.personal_info.image);
+
+    //         const { data } = await api.put(`/api/resumes/update`, formData, { headers: { Authorization: token } });
+    //         setResumeData(data.resume)
+    //         toast.success(data.message)
+
+
+    //     } catch (error) {
+    //         console.error("Error saving resume :- ", error)
+    //     }
+    // }
+
+
+// save resume with the field validation applied
     const saveResume = async () => {
         try {
+            const personal = resumeData.personal_info;
+
+            let errors = {};
+
+            // ✅ Required validations
+            if (!personal.full_name?.trim()) {
+                errors.full_name = "Full name is required";
+            }
+
+            if (!personal.email?.trim()) {
+                errors.email = "Email is required";
+            }
+
+            if (!personal.phone?.trim()) {
+                errors.phone = "Phone number is required";
+            } else if (!/^\d{10,}$/.test(personal.phone)) {
+                errors.phone = "Phone number must be at least 10 digits";
+            }
+
+            if (!personal.location?.trim()) {
+                errors.location = "Location is required";
+            }
+
+            if (!personal.profession?.trim()) {
+                errors.profession = "Profession is required";
+            }
+
+            // ❌ Stop if any error
+            if (Object.keys(errors).length > 0) {
+                console.log("❌ Validation failed", errors);
+
+                toast.error("Please fill all required fields");
+
+                return; // 🚫 STOP API CALL
+            }
+
+            // ✅ Continue saving
             let updatedResumeData = structuredClone(resumeData);
 
-            //remove image from the updatedResumeData
             if (typeof resumeData.personal_info.image === "object") {
-                delete updatedResumeData.personal_info.image
+                delete updatedResumeData.personal_info.image;
             }
 
             const formData = new FormData();
-            formData.append("resumeId", resumeId)
+            formData.append("resumeId", resumeId);
             formData.append("resumeData", JSON.stringify(updatedResumeData));
-            removeBackground && formData.append("removeBackground", "yes");
-            typeof resumeData.personal_info.image === "object" && formData.append("image", resumeData.personal_info.image);
 
-            const { data } = await api.put(`/api/resumes/update`, formData, { headers: { Authorization: token } });
-            setResumeData(data.resume)
-            toast.success(data.message)
+            if (removeBackground) {
+                formData.append("removeBackground", "yes");
+            }
 
+            if (typeof resumeData.personal_info.image === "object") {
+                formData.append("image", resumeData.personal_info.image);
+            }
+
+            const { data } = await api.put(
+                `/api/resumes/update`,
+                formData,
+                { headers: { Authorization: token } }
+            );
+
+            setResumeData(data.resume);
+            toast.success(data.message);
 
         } catch (error) {
-            console.error("Error saving resume :- ", error)
+            console.error("Error saving resume :- ", error);
+            toast.error("Something went wrong");
         }
-    }
+    };
 
 
     useEffect(() => {
